@@ -56,6 +56,7 @@ fn handle_client(mut stream: TcpStream, db: &mut HashMap<String, Value>) {
                                     println!("key: {}", key);
                                     println!("value: {:?}", value);
                                     db.insert(key, value);
+                                    break;
                                 },
                                 Err(_) => println!("An error occured parsing expires")
                             }
@@ -75,14 +76,18 @@ fn handle_client(mut stream: TcpStream, db: &mut HashMap<String, Value>) {
                                                 Some(v) => {
                                                     println!("v: {:?}", v);
                                                     db.remove(&key);
+                                                    break;
                                                 },
-                                                _ => {}
+                                                _ => break
                                             }
                                         },
                                         Err(_) => println!("an error occured writing")
                                     }
                                 },
-                                _ => println!("No key")
+                                _ => {
+                                    println!("No key");
+                                    break;
+                                }
                             }
                         } else if command == "delete" {
                             if length < 2 {
@@ -91,13 +96,13 @@ fn handle_client(mut stream: TcpStream, db: &mut HashMap<String, Value>) {
 
                             let key = String::from(actions[1]);
                             db.remove(&key);
+                            break;
                         }
                     },
                     Err(_) => {
                         println!("An error occurred");
                     }
                 }
-
             },
             Err(_) => {
                 println!("An error occurred, terminating connection with {}", stream.peer_addr().unwrap());
