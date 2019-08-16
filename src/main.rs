@@ -10,7 +10,8 @@ fn main() -> io::Result<()> {
     let mut db = HashMap::new();
 
     for stream in listener.incoming() {
-        handle_client(stream?, &mut db);
+        let stream = stream?;
+        handle_client(stream, &mut db);
     }
 
     drop(listener);
